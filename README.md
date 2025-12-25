@@ -1,4 +1,4 @@
-# FRG Language Support
+# FRG
 
 This extension provides language support for FRG files in Visual Studio Code.
 
