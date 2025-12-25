@@ -1,0 +1,44 @@
+{
+  "name": "frg-language-support",
+  "displayName": "FRG Language Support",
+  "description": "Syntax highlighting and Go to Definition for FRG files",
+  "version": "0.0.1",
+  "publisher": "pinealctx",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pinealctx/vscode-frg-extension.git"
+  },
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "activationEvents": [
+    "onLanguage:frg"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [{
+      "id": "frg",
+      "aliases": ["FRG", "frg"],
+      "extensions": [".frg"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "frg",
+      "scopeName": "source.frg",
+      "path": "./syntaxes/frg.tmLanguage.json"
+    }]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.75.0",
+    "@types/node": "16.x",
+    "typescript": "^4.9.0"
+  }
+}

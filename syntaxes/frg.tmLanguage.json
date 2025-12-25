@@ -1,0 +1,141 @@
+{
+	"scopeName": "source.frg",
+	"patterns": [
+		{
+			"include": "#comments"
+		},
+		{
+			"include": "#strings"
+		},
+		{
+			"include": "#keywords"
+		},
+        {
+            "include": "#info-block"
+        },
+		{
+			"include": "#attributes"
+		},
+        {
+            "include": "#handlers"
+        },
+        {
+            "include": "#http-routes"
+        },
+		{
+			"include": "#types"
+		},
+        {
+            "include": "#numbers"
+        }
+	],
+	"repository": {
+		"comments": {
+			"patterns": [
+				{
+					"name": "comment.line.double-slash.frg",
+					"match": "//.*$"
+				},
+                {
+                    "name": "comment.block.frg",
+                    "begin": "/\\*",
+                    "end": "\\*/"
+                }
+			]
+		},
+		"strings": {
+			"patterns": [
+				{
+					"name": "string.quoted.double.frg",
+					"begin": "\"",
+					"end": "\"",
+					"patterns": [
+						{
+							"name": "constant.character.escape.frg",
+							"match": "\\\\."
+						}
+					]
+				},
+				{
+					"name": "string.quoted.other.backtick.frg",
+					"begin": "`",
+					"end": "`"
+				}
+			]
+		},
+		"keywords": {
+			"patterns": [
+				{
+					"name": "keyword.control.frg",
+					"match": "\\b(syntax|info|import|type|enum|service|returns)\\b"
+				}
+			]
+		},
+		"types": {
+			"patterns": [
+				{
+					"name": "storage.type.frg",
+					"match": "\\b(string|bool|int|int32|int64|float|float32|float64|double|map|array|interface\\{\\})\\b"
+				},
+                {
+                    "name": "entity.name.type.frg",
+                    "match": "\\b[A-Z][a-zA-Z0-9_]*\\b"
+                }
+			]
+		},
+		"attributes": {
+			"patterns": [
+                {
+                    "begin": "(@attr)\\s*\\(",
+                    "beginCaptures": {
+                        "1": { "name": "entity.name.function.decorator.frg" }
+                    },
+                    "end": "\\)",
+                    "patterns": [
+                        { "include": "#strings" },
+                        {
+                            "name": "entity.other.attribute-name.frg",
+                            "match": "\\b(group|auth|desc)\\b(?=\\s*:)"
+                        }
+                    ]
+                },
+				{
+					"name": "entity.name.function.decorator.frg",
+					"match": "@[a-zA-Z0-9_]+"
+				}
+			]
+		},
+        "info-block": {
+            "begin": "\\b(info)\\s*\\(",
+            "beginCaptures": {
+                "1": { "name": "keyword.control.frg" }
+            },
+            "end": "\\)",
+            "patterns": [
+                { "include": "#strings" },
+                {
+                    "name": "entity.other.attribute-name.frg",
+                    "match": "\\b(title|desc|gomod|version)\\b(?=\\s*:)"
+                }
+            ]
+        },
+        "handlers": {
+            "match": "(@handler)\\s+([a-zA-Z0-9_]+)",
+            "captures": {
+                "1": { "name": "entity.name.function.decorator.frg" },
+                "2": { "name": "entity.name.function.frg" }
+            }
+        },
+        "http-routes": {
+            "match": "\\b(get|post|put|delete|patch)\\s+([/a-zA-Z0-9_\\{\\}]+)",
+            "captures": {
+                "1": { "name": "keyword.control.http.frg" },
+                "2": { "name": "string.unquoted.path.frg" }
+            }
+        },
+        "numbers": {
+            "name": "constant.numeric.frg",
+            "match": "\\b\\d+\\b"
+        }
+	}
+}
