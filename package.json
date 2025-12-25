@@ -2,7 +2,7 @@
   "name": "frg-language-support",
   "displayName": "FRG",
   "description": "Syntax highlighting and Go to Definition for FRG files",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "MIT",
   "icon": "icon.png",
   "publisher": "pinealctx",
