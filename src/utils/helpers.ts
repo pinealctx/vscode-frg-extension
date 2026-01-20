@@ -87,3 +87,56 @@ export function alignAndOutputFields(
         result.push(aligned);
     }
 }
+
+// Enum member info for alignment
+export interface EnumMemberInfo {
+    line: number;
+    name: string;
+    value: string;  // e.g., "1" or "" (without "=" and semicolon)
+    comment: string;
+}
+
+export function alignAndOutputEnumMembers(
+    result: string[],
+    members: EnumMemberInfo[],
+    indent: string
+): void {
+    if (members.length === 0) return;
+
+    // Calculate maximum widths
+    let maxNameLen = 0;
+    let maxValueLen = 0;
+
+    for (const member of members) {
+        maxNameLen = Math.max(maxNameLen, member.name.length);
+        maxValueLen = Math.max(maxValueLen, member.value.length);
+    }
+
+    // Calculate content width up to and including semicolon for each member
+    const memberWidths = members.map(member => {
+        const namePart = member.name.padEnd(maxNameLen);
+        const valuePart = member.value ? ` = ${member.value};` : ';';
+        return indent.length + namePart.length + valuePart.length;
+    });
+
+    const maxContentWidth = Math.max(...memberWidths);
+
+    // Output aligned enum members
+    for (const member of members) {
+        let aligned = `${indent}${member.name.padEnd(maxNameLen)}`;
+        if (member.value) {
+            aligned += ` = ${member.value.padEnd(maxValueLen)};`;
+        } else {
+            aligned += ';';
+        }
+        // Only add comment alignment padding if there's a comment
+        if (member.comment) {
+            const currentWidth = aligned.length;
+            if (currentWidth < maxContentWidth) {
+                aligned += ' '.repeat(maxContentWidth - currentWidth);
+            }
+            aligned += ` ${member.comment}`;
+        }
+        result.push(aligned);
+    }
+}

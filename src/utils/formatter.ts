@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { alignAndOutputFields, FieldInfo } from '../utils/helpers';
+import { alignAndOutputFields, alignAndOutputEnumMembers, FieldInfo, EnumMemberInfo } from '../utils/helpers';
 
 // FRG Formatter - Conservative approach that preserves structure
 export function formatFRG(text: string): string {
@@ -13,11 +13,13 @@ export function formatFRG(text: string): string {
     let inInfo = false;
     let inExternDefs = false;
     let inTypeOrStruct = false;  // Track if we're in a type or struct block for alignment
+    let inEnum = false;          // Track if we're in an enum block for alignment
     let prevLineWasEmpty = false;
 
     // For field alignment
     let typeBlockStart = -1;
     let typeBlockFields: FieldInfo[] = [];
+    let enumBlockMembers: EnumMemberInfo[] = [];
 
     for (let i = 0; i < lines.length; i++) {
         const trimmed = lines[i].trim();
@@ -93,6 +95,8 @@ export function formatFRG(text: string): string {
         const enumMatch = trimmed.match(/^enum\s+(\w+)\s*\{/);
         if (enumMatch) {
             braceLevel++;
+            inEnum = true;
+            enumBlockMembers = [];
             result.push(`enum ${enumMatch[1]} {`);
             continue;
         }
@@ -110,6 +114,12 @@ export function formatFRG(text: string): string {
                 alignAndOutputFields(result, typeBlockFields, indent);
                 typeBlockFields = [];
                 inTypeOrStruct = false;
+            }
+            if (inEnum && enumBlockMembers.length > 0) {
+                // Align and output enum members
+                alignAndOutputEnumMembers(result, enumBlockMembers, indent);
+                enumBlockMembers = [];
+                inEnum = false;
             }
             if (braceLevel > 0) braceLevel--;
             result.push('}');
@@ -183,8 +193,41 @@ export function formatFRG(text: string): string {
             continue;
         }
 
+        if (inEnum) {
+            // Collect enum members for alignment
+            if (trimmed.startsWith('//')) {
+                // If we have collected members, align them before adding comment
+                if (enumBlockMembers.length > 0) {
+                    alignAndOutputEnumMembers(result, enumBlockMembers, indent);
+                    enumBlockMembers = [];
+                }
+                result.push(`${indent}${trimmed}`);
+                continue;
+            }
+
+            // Parse enum member: Name [= value]; // comment
+            // Matches: "One = 1; // comment" or "Two; // comment"
+            const enumMemberMatch = trimmed.match(/^(\w+)(?:\s*=\s*([^;]+))?\s*;\s*(\/\/.*)?$/);
+            if (enumMemberMatch) {
+                const name = enumMemberMatch[1];
+                const value = enumMemberMatch[2] ? enumMemberMatch[2].trim() : '';
+                const comment = enumMemberMatch[3] || '';
+                enumBlockMembers.push({ line: i, name, value, comment });
+                continue;
+            }
+
+            // If we have collected members but hit a non-member line, output them
+            if (enumBlockMembers.length > 0) {
+                alignAndOutputEnumMembers(result, enumBlockMembers, indent);
+                enumBlockMembers = [];
+            }
+
+            result.push(`${indent}${trimmed}`);
+            continue;
+        }
+
         if (braceLevel > 0) {
-            // Inside enum/service block
+            // Inside service block
             if (trimmed.startsWith('@handler')) {
                 const match = trimmed.match(/@handler\s+(\w+)/);
                 if (match) {
