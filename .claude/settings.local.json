@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run compile)",
+      "Bash(npm install:*)",
+      "Bash(git checkout:*)",
+      "Bash(node:*)",
+      "Bash(wc:*)",
+      "Bash(tree:*)",
+      "Bash(ls:*)",
+      "Bash(xargs:*)",
+      "WebSearch",
+      "mcp__web-reader__webReader",
+      "Bash(git add:*)"
+    ]
+  }
+}

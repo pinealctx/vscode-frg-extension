@@ -1,9 +1,13 @@
 .vscode/**
 .vscode-test/**
 src/**
-.gitignore
-vsc-extension-quickstart.md
-tsconfig.json
-.github/**
+out/**
 **/*.map
 **/*.ts
+.github/**
+node_modules/**
+.DS_Store
+package-lock.json
+yarn.lock
+*.vsix
+

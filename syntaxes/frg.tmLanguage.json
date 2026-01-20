@@ -13,6 +13,9 @@
         {
             "include": "#info-block"
         },
+        {
+            "include": "#extern-block"
+        },
 		{
 			"include": "#attributes"
 		},
@@ -26,7 +29,13 @@
 			"include": "#types"
 		},
         {
+            "include": "#struct-tags"
+        },
+        {
             "include": "#numbers"
+        },
+        {
+            "include": "#operators"
         }
 	],
 	"repository": {
@@ -34,7 +43,17 @@
 			"patterns": [
 				{
 					"name": "comment.line.double-slash.frg",
-					"match": "//.*$"
+					"match": "//.*$",
+					"captures": {
+						"0": {
+							"patterns": [
+								{
+									"name": "entity.other.attribute-name.frg",
+									"match": "\\b(summary|tags|deprecated|security|description|example|internal)\\b:"
+								}
+							]
+						}
+					}
 				},
                 {
                     "name": "comment.block.frg",
@@ -67,7 +86,7 @@
 			"patterns": [
 				{
 					"name": "keyword.control.frg",
-					"match": "\\b(syntax|info|import|type|enum|service|returns)\\b"
+					"match": "\\b(syntax|info|import|type|enum|struct|service|returns)\\b"
 				}
 			]
 		},
@@ -75,7 +94,7 @@
 			"patterns": [
 				{
 					"name": "storage.type.frg",
-					"match": "\\b(string|bool|int|int32|int64|float|float32|float64|double|map|array|interface\\{\\})\\b"
+					"match": "\\b(string|bool|int|int32|int64|float|float32|float64|double|map|array|any|interface\\{\\})\\b"
 				},
                 {
                     "name": "entity.name.type.frg",
@@ -99,10 +118,10 @@
                         }
                     ]
                 },
-				{
-					"name": "entity.name.function.decorator.frg",
-					"match": "@[a-zA-Z0-9_]+"
-				}
+                {
+                    "name": "entity.name.function.decorator.frg",
+                    "match": "@[a-zA-Z0-9_]+"
+                }
 			]
 		},
         "info-block": {
@@ -115,7 +134,22 @@
                 { "include": "#strings" },
                 {
                     "name": "entity.other.attribute-name.frg",
-                    "match": "\\b(title|desc|gomod|version)\\b(?=\\s*:)"
+                    "match": "\\b(title|desc|gomod|version|author|email)\\b(?=\\s*:)"
+                }
+            ]
+        },
+        "extern-block": {
+            "begin": "(@externDefs)\\s*\\{",
+            "beginCaptures": {
+                "1": { "name": "entity.name.function.decorator.frg" }
+            },
+            "end": "\\}",
+            "patterns": [
+                { "include": "#comments" },
+                { "include": "#strings" },
+                {
+                    "name": "entity.other.attribute-name.frg",
+                    "match": "\\b(name|swaggerType|importPath)\\b(?=\\s*:)"
                 }
             ]
         },
@@ -127,15 +161,66 @@
             }
         },
         "http-routes": {
-            "match": "\\b(get|post|put|delete|patch)\\s+([/a-zA-Z0-9_\\{\\}]+)",
-            "captures": {
+            "begin": "(get|post|put|delete|patch)\\s+([/a-zA-Z0-9_\\{\\}]+)",
+            "beginCaptures": {
                 "1": { "name": "keyword.control.http.frg" },
                 "2": { "name": "string.unquoted.path.frg" }
-            }
+            },
+            "end": "(?=\\s*$|\\s*//)",
+            "patterns": [
+                {
+                    "begin": "\\(",
+                    "end": "\\)",
+                    "name": "meta.function.parameters.frg",
+                    "patterns": [
+                        { "include": "#types" }
+                    ]
+                },
+                {
+                    "match": "\\breturns\\b",
+                    "name": "keyword.control.frg"
+                },
+                {
+                    "begin": "returns\\s*\\(",
+                    "end": "\\)",
+                    "name": "meta.function.return-type.frg",
+                    "patterns": [
+                        { "include": "#types" }
+                    ]
+                }
+            ]
+        },
+        "struct-tags": {
+            "name": "meta.tag.frg",
+            "begin": "`",
+            "end": "`",
+            "patterns": [
+                {
+                    "name": "entity.other.attribute-name.frg",
+                    "match": "\\b(json|header|validate|omgitempty|default|example|description)\\b:"
+                },
+                { "include": "#strings" }
+            ]
         },
         "numbers": {
-            "name": "constant.numeric.frg",
-            "match": "\\b\\d+\\b"
+            "patterns": [
+                {
+                    "name": "constant.numeric.frg",
+                    "match": "\\b\\d+\\b"
+                },
+                {
+                    "name": "constant.numeric.frg",
+                    "match": "\\b\\d+\\.\\d+\\b"
+                }
+            ]
+        },
+        "operators": {
+            "patterns": [
+                {
+                    "name": "keyword.operator.frg",
+                    "match": "=|\\*|\\[\\]|\\{|\\}|\\(|\\)|;|,|:"
+                }
+            ]
         }
 	}
 }

@@ -1,7 +1,7 @@
 {
   "name": "frg-language-support",
   "displayName": "FRG",
-  "description": "Syntax highlighting and Go to Definition for FRG files",
+  "description": "Syntax highlighting, Go to Definition, and Document Formatting for FRG files",
   "version": "0.0.3",
   "license": "MIT",
   "icon": "icon.png",
@@ -14,10 +14,8 @@
     "vscode": "^1.75.0"
   },
   "categories": [
-    "Programming Languages"
-  ],
-  "activationEvents": [
-    "onLanguage:frg"
+    "Programming Languages",
+    "Formatters"
   ],
   "main": "./out/extension.js",
   "contributes": {

@@ -1,4 +1,37 @@
-out
-node_modules
-.vscode-test
+# Compiled output
+out/
+dist/
+
+# Dependencies
+node_modules/
+
+# VS Code
+.vscode-test/
 *.vsix
+**/*.vsix
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# Claude
+.claude/settings.local.json
+
+# Test coverage
+coverage/
+.nyc_output/
