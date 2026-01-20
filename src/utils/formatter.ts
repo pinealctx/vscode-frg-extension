@@ -73,13 +73,20 @@ export function formatFRG(text: string): string {
         }
 
         // Detect type/enum/struct/service blocks
-        const typeMatch = trimmed.match(/^(type|struct)\s+(\w+)\s*\{/);
+        // Matches: type Name {, struct Name {, OR type Name struct {
+        const typeMatch = trimmed.match(/^(type|struct)\s+(\w+)(?:\s+(struct))?\s*\{/);
         if (typeMatch) {
             braceLevel++;
-            inTypeOrStruct = (typeMatch[1] === 'type' || typeMatch[1] === 'struct');
+            inTypeOrStruct = true;
             typeBlockStart = result.length;
             typeBlockFields = [];
-            result.push(`${typeMatch[1]} ${typeMatch[2]} {`);
+            if (typeMatch[3]) {
+                // type Name struct {
+                result.push(`type ${typeMatch[2]} struct {`);
+            } else {
+                // type Name { or struct Name {
+                result.push(`${typeMatch[1]} ${typeMatch[2]} {`);
+            }
             continue;
         }
 
@@ -235,9 +242,14 @@ export function formatFRG(text: string): string {
         result.push(trimmed);
     }
 
-    // Remove trailing empty lines
-    while (result.length > 0 && result[result.length - 1] === '') {
+    // Remove trailing empty lines, but keep one
+    while (result.length > 1 && result[result.length - 1] === '') {
         result.pop();
+    }
+
+    // Ensure exactly one trailing empty line
+    if (result.length > 0 && result[result.length - 1] !== '') {
+        result.push('');
     }
 
     return result.join('\n');
