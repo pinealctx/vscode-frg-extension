@@ -11,7 +11,9 @@
       "Bash(xargs:*)",
       "WebSearch",
       "mcp__web-reader__webReader",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git tag:*)"
     ]
   }
 }
