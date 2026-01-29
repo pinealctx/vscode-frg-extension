@@ -105,11 +105,9 @@ export function alignAndOutputEnumMembers(
 
     // Calculate maximum widths
     let maxNameLen = 0;
-    let maxValueLen = 0;
 
     for (const member of members) {
         maxNameLen = Math.max(maxNameLen, member.name.length);
-        maxValueLen = Math.max(maxValueLen, member.value.length);
     }
 
     // Calculate content width up to and including semicolon for each member
@@ -125,7 +123,7 @@ export function alignAndOutputEnumMembers(
     for (const member of members) {
         let aligned = `${indent}${member.name.padEnd(maxNameLen)}`;
         if (member.value) {
-            aligned += ` = ${member.value.padEnd(maxValueLen)};`;
+            aligned += ` = ${member.value};`;
         } else {
             aligned += ';';
         }
